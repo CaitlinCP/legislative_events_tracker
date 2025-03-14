@@ -15,8 +15,8 @@ app.title = "Legislative Events Tracker"
 def pull_data(state, start_date, end_date):
     # Mock function to return event data
     return [
-        {"event": "Hearing on Education Reform", "committee": "Education", "description": "Discussion on new education policies", "date": "03-20-2025", "time": "10:00 AM", "bill": "HB1234", "registration_link": "http://example.com", "location": "State Capitol"},
-        {"event": "Budget Planning Session", "committee": "Finance", "description": "Review of budget proposals", "date": "03-25-2025", "time": "2:00 PM", "bill": "SB5678", "registration_link": "http://example.com", "location": "State Capitol"},
+        {"name": "Hearing on Education Reform", "committee": "Education", "description": "Discussion on new education policies", "start_date": "03-20-2025", "bill_data": "HB1234", "location": "State Capitol"},
+        {"name": "Budget Planning Session", "committee": "Finance", "description": "Review of budget proposals", "start_date": "03-25-2025", "bill_data": "SB5678", "location": "State Capitol"},
     ]
 
 # ---------------------------- Define Layout ----------------------------------
@@ -153,7 +153,7 @@ explore_page = dbc.Container(
                                 id="events_table",
                                 columns=[
                                     {"name": col, "id": col} for col in [
-                                        "event", "committee", "description", "date", "time", "bill", "registration_link", "location"
+                                        "name", "committee", "description", "start_date", "bill_data", "location"
                                     ]
                                 ],
                                 data=[],  # Empty initially, can be updated dynamically
