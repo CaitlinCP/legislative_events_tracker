@@ -102,3 +102,6 @@ class fetchBills():
         with open(filepath, 'w') as f:
             json_as_str = json.dumps(results)
             f.write(json_as_str)
+
+    def make_events_request():
+        pass
