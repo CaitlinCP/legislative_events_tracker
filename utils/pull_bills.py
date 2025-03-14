@@ -200,7 +200,9 @@ class fetchEvents():
 
         for entity in related_entities:
             if entity['entity_type'] == 'bill':
-                bill_data.append(entity.get('name', ''), entity.get('title', ''), entity.get('bill', '').get('id', ''))
+                bill_data.append((entity.get('name', ''), 
+                                  entity.get('bill', '').get('title', ''), 
+                                  entity.get('bill', '').get('id', '')))
         
         return bill_data
 
@@ -214,8 +216,9 @@ class fetchEvents():
             start_date = record.get('start_date', '')
             status = record.get('status', '')
 
-            if record.get('related_entities:'):
-                bill_data = self.get_bill_list(record.get('related_entities'))
+            if record.get('agenda', [])[0].get('related_entities', ''):
+                bill_data = self.get_bill_list(
+                    record.get('agenda', [])[0].get('related_entities', ''))
             else:
                 bill_data = None
             location = record.get('location', '').get('name', '')
