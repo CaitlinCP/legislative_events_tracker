@@ -228,6 +228,12 @@ class fetchEvents():
                 })
         
         return results
+    
+    def handle_request(self, state, before, after, count=100, per_page=20, *args):
+        response = self.pull_events(state, before, after, count, per_page, *args)
+        parsed = self.parse_event_data(response)
+
+        return parsed
             
     def write_results(self, results, filepath):
         with open(filepath, 'w') as f:
