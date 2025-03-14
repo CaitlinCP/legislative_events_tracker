@@ -2,7 +2,14 @@ import webbrowser
 import dash
 from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output, State
+from utils.pull_bills import fetchEvents
 import dash_bootstrap_components as dbc
+import os
+
+
+API_KEY = os.environ["OPEN_STATES_API_KEY"]
+
+fe = fetchEvents(API_KEY)
 
 from utils_app import description, instructions_str
 
@@ -12,12 +19,12 @@ app = dash.Dash(
 )
 app.title = "Legislative Events Tracker"
 
+
+
 def pull_data(state, start_date, end_date):
-    # Mock function to return event data
-    return [
-        {"name": "Hearing on Education Reform", "committee": "Education", "description": "Discussion on new education policies", "start_date": "03-20-2025", "bill_data": "HB1234", "location": "State Capitol"},
-        {"name": "Budget Planning Session", "committee": "Finance", "description": "Review of budget proposals", "start_date": "03-25-2025", "bill_data": "SB5678", "location": "State Capitol"},
-    ]
+    results = fe.handle_request(state, end_date, start_date)
+
+    return results
 
 # ---------------------------- Define Layout ----------------------------------
 app.layout = dbc.Container(

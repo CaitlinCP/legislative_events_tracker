@@ -35,8 +35,6 @@ class fetchBills():
         results = []
         page = 1
 
-        print("Pulling bills from page 1")
-
         # Make initial response to test API availability, determine
         # max number of pages to pull
         initial_response = self.make_bills_request(
@@ -217,8 +215,8 @@ class fetchEvents():
             status = record.get('status', '')
 
             if record.get('agenda', [])[0].get('related_entities', ''):
-                bill_data = self.get_bill_list(
-                    record.get('agenda', [])[0].get('related_entities', ''))
+                bill_data = str(self.get_bill_list(
+                    record.get('agenda', [])[0].get('related_entities', '')))
             else:
                 bill_data = None
             location = record.get('location', '').get('name', '')
@@ -235,7 +233,6 @@ class fetchEvents():
     def handle_request(self, state, before, after, count=100, per_page=20, *args):
         response = self.pull_events(state, before, after, count, per_page, *args)
         parsed = self.parse_event_data(response)
-
         return parsed
             
     def write_results(self, results, filepath):
