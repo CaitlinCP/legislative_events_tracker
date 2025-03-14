@@ -119,7 +119,7 @@ class fetchEvents():
         response = requests.get(self.base_url, {'apikey': API_KEY, 'page':page,
                                     'jurisdiction':state, 'per_page': per_page,
                                     'included': args, 'before': before, 'after': after, 
-                                    'require_bills':'false','include':'links&include=sources&include=media&include=documents&include=participants&include=agenda'})
+                                    'require_bills':'false','include':['links','sources','media','documents','participants','agenda']})
         
         if response.status_code in (400,422):
             raise ValueError(response.json())
