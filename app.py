@@ -4,6 +4,8 @@ from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 
+from utils_app import description, instructions_str
+
 # ---------------------------- Init App ---------------------------------------
 app = dash.Dash(
     __name__, external_stylesheets=[dbc.themes.LUX], suppress_callback_exceptions=True
@@ -35,7 +37,6 @@ app.layout = dbc.Container(
 )
 
 # Home Page Layout
-# Home Page Layout
 landing_page = dbc.Container(
     [
         dbc.Row(
@@ -46,7 +47,7 @@ landing_page = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("Description", className="lead text-center"),
+                html.P(description, className="lead text-center"),
                 width=10,
                 className="mx-auto",
             )
@@ -65,7 +66,7 @@ landing_page = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.Div([dcc.Markdown("Instructins", dangerously_allow_html=True)])
+                html.Div([dcc.Markdown(instructions_str, dangerously_allow_html=True)])
             )
         ),
     ],
@@ -104,7 +105,7 @@ explore_page = dbc.Container(
                                     id="start_date",
                                     type="text",
                                     placeholder="Start date",
-                                    value="03-14-2025",
+                                    value="2025-03-14",
                                     className="form-control",
                                 ),
                             ]
@@ -121,7 +122,7 @@ explore_page = dbc.Container(
                                     id="end_date",
                                     type="text",
                                     placeholder="End date",
-                                    value="04-13-2025",
+                                    value="2025-04-13",
                                     className="form-control",
                                 ),
                             ]
@@ -134,7 +135,7 @@ explore_page = dbc.Container(
                         dbc.CardBody(
                             [
                                 html.Label(" ", className="fw-semibold"),
-                                html.Button('Submit', id='submit-val', n_clicks=0),
+                                dbc.Button("Submit", id="submit-val", n_clicks=0, color="primary", className="w-100 fw-bold"),
                             ]
                         ),
                     ),
