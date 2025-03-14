@@ -120,7 +120,7 @@ class fetchEvents():
                                     'jurisdiction':state, 'per_page': per_page,
                                     'included': args, 'before': before, 'after': after, 
                                     'require_bills':'false','include':['links','sources','media','documents','participants','agenda']})
-        
+
         if response.status_code in (400,422):
             raise ValueError(response.json())
         
@@ -129,7 +129,7 @@ class fetchEvents():
 
         return response
 
-    def pull_events(self, state, before, after, per_page, *args):
+    def pull_events(self, state, before, after, count=100, per_page=20, *args):
         results = []
         page = 1
 
@@ -143,7 +143,7 @@ class fetchEvents():
         )
 
         if initial_response.status_code == 200:
-
+            
             max_pages = initial_response.json()['pagination']['max_page']
             results.extend(initial_response.json()['results'])
 
@@ -184,7 +184,7 @@ class fetchEvents():
         
         return results
 
-    def pull_event_data(self,filepath):
+    def pull_event_data(self, filepath):
 
         with open(filepath, 'r') as f:
             json_string = f.read()
@@ -194,7 +194,41 @@ class fetchEvents():
             url = event['openstates_url']
 
             yield url
+    
+    def get_bill_list(self, related_entities):
+        bill_data = []
 
+        for entity in related_entities:
+            if entity['entity_type'] == 'bill':
+                bill_data.append(entity.get('name', ''), entity.get('title', ''), entity.get('bill', '').get('id', ''))
+        
+        return bill_data
+
+    def parse_event_data(self, response: list):
+        results = []
+
+        for record in response:
+            name = record.get('name', '')
+            committee = record.get('participants', [])[0].get('name')
+            description = record.get('description', '')
+            start_date = record.get('start_date', '')
+            status = record.get('status', '')
+
+            if record.get('related_entities:'):
+                bill_data = self.get_bill_list(record.get('related_entities'))
+            else:
+                bill_data = None
+            location = record.get('location', '').get('name', '')
+
+            results.append({
+                'name': name, 'committee': committee,
+                'description': description, 'start_date': start_date,
+                'status': status, 'bill_data': bill_data,
+                'location': location
+                })
+        
+        return results
+            
     def write_results(self, results, filepath):
         with open(filepath, 'w') as f:
             json_as_str = json.dumps(results)
