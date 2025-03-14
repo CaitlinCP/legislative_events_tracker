@@ -11,3 +11,4 @@ Event data from states differs drastically. Right now, the product only includes
 * Parse time zone returned by the API to show the accurate time for an event
 * Create an interface to search for bills associated with a hearing
 * Handle state-level differences in returned event data
+* Let people search for hearings by subject matter type
