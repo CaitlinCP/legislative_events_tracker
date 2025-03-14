@@ -22,7 +22,7 @@ app.title = "Legislative Events Tracker"
 
 
 def pull_data(state, start_date, end_date):
-    results = fe.handle_request(state, end_date, start_date)
+    results = fe.handle_request(state, end_date, start_datebill)
 
     return results
 
