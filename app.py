@@ -1,10 +1,7 @@
 import webbrowser
 import dash
-from dash import dcc, html
-from dash.dependencies import Input, Output
-import dash_bootstrap_components as dbc
-import dash_html_components as html
-import pandas as pd
+from dash import dcc, html, dash_table
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 
 # ---------------------------- Init App ---------------------------------------
@@ -12,6 +9,13 @@ app = dash.Dash(
     __name__, external_stylesheets=[dbc.themes.LUX], suppress_callback_exceptions=True
 )
 app.title = "Legislative Events Tracker"
+
+def pull_data(state, start_date, end_date):
+    # Mock function to return event data
+    return [
+        {"event": "Hearing on Education Reform", "committee": "Education", "description": "Discussion on new education policies", "date": "03-20-2025", "time": "10:00 AM", "bill": "HB1234", "registration_link": "http://example.com", "location": "State Capitol"},
+        {"event": "Budget Planning Session", "committee": "Finance", "description": "Review of budget proposals", "date": "03-25-2025", "time": "2:00 PM", "bill": "SB5678", "registration_link": "http://example.com", "location": "State Capitol"},
+    ]
 
 # ---------------------------- Define Layout ----------------------------------
 app.layout = dbc.Container(
@@ -30,6 +34,7 @@ app.layout = dbc.Container(
     fluid=True,
 )
 
+# Home Page Layout
 # Home Page Layout
 landing_page = dbc.Container(
     [
@@ -67,12 +72,13 @@ landing_page = dbc.Container(
     fluid=True,
     className="py-5",
 )
+
 # Explore Page Layout
 explore_page = dbc.Container(
     [
         dbc.Row(
             dbc.Col(
-                html.H1("Legislative Events Traker", className="text-center display-4 fw-bold mb-4"),
+                html.H1("Legislative Events Tracker", className="text-center display-4 fw-bold mb-4"),
                 width=12,
             )
         ),
@@ -83,17 +89,11 @@ explore_page = dbc.Container(
                         dbc.CardBody(
                             [
                                 html.Label("State:", className="fw-semibold"),
-                                dcc.Input(
-                                    id="state-input",
-                                    type="text",
-                                    placeholder="Enter your State",
-                                    value=" ",
-                                    className="form-control",
-                                ),
+                                dcc.Dropdown(['Texas', 'California', 'Colorado'], id="state"),
                             ]
                         ),
                     ),
-                    width=4,
+                    width=2,
                 ),
                 dbc.Col(
                     dbc.Card(
@@ -110,7 +110,7 @@ explore_page = dbc.Container(
                             ]
                         ),
                     ),
-                    width=4,
+                    width=2,
                 ),
                 dbc.Col(
                     dbc.Card(
@@ -127,7 +127,18 @@ explore_page = dbc.Container(
                             ]
                         ),
                     ),
-                    width=4,
+                    width=2,
+                ),
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Label(" ", className="fw-semibold"),
+                                html.Button('Submit', id='submit-val', n_clicks=0),
+                            ]
+                        ),
+                    ),
+                    width=2,
                 ),
             ],
             className="justify-content-center mb-4",
@@ -136,7 +147,19 @@ explore_page = dbc.Container(
             [
                 dbc.Col(
                     dbc.Card(
-                        dbc.CardBody(dcc.Graph(id="events_table")),
+                        dbc.CardBody(
+                            dash_table.DataTable(
+                                id="events_table",
+                                columns=[
+                                    {"name": col, "id": col} for col in [
+                                        "event", "committee", "description", "date", "time", "bill", "registration_link", "location"
+                                    ]
+                                ],
+                                data=[],  # Empty initially, can be updated dynamically
+                                style_table={"overflowX": "auto"},
+                                style_header={"fontWeight": "bold"},
+                            )
+                        ),
                         className="shadow",
                     ),
                     width=12,
@@ -202,6 +225,7 @@ considerations_page = dbc.Container(
     className="py-5",
 )
 
+
 # ---------------------------- App Callbacks ----------------------------------
 # Update page content based on selected tab
 @app.callback(
@@ -216,6 +240,20 @@ def update_tab(tab_name):
         return explore_page
     elif tab_name == "considerations":
         return considerations_page
+
+# Callback to update the table on submit
+@app.callback(
+    Output("events_table", "data"),
+    Input("submit-val", "n_clicks"),
+    State("state", "value"),
+    State("start_date", "value"),
+    State("end_date", "value"),
+    prevent_initial_call=True,
+)
+def update_table(n_clicks, state, start_date, end_date):
+    if state and start_date and end_date:
+        return pull_data(state, start_date, end_date)
+    return []
 
 # Run application on web browser
 if __name__ == "__main__":
